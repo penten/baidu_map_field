@@ -40,6 +40,6 @@ function baidu_map_field_field_schema($field) {
 /**
  * Implements hook_uninstall().
  */
-function google_map_field_uninstall() {
+function baidu_map_field_uninstall() {
   variable_del('baidu_map_field_*');
 }
