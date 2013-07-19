@@ -1,0 +1,30 @@
+<?php
+
+function baidu_map_field_field_schema($field) {
+	return array(
+		'columns' => array(
+			'lat' => array(
+				'type' => 'float',
+				'size' => 'big',
+				'default' => 0.0,
+				'not null' => false,
+			),
+			'lon' => array(
+				'type' => 'float',
+				'size' => 'big',
+				'default' => 0.0,
+				'not null' => false,
+			),
+			'zoom' => array(
+				'type' => 'int',
+				'length' => 10,
+				'not null' => false,
+			),
+			'description' => array(
+				'type' => 'text',
+				'length' => 255,
+				'not null' => false,
+			),
+		),
+	);
+}
