@@ -13,6 +13,7 @@ function baidu_map_field_settings_form($form, &$form_state) {
     '#title' => t('Baidu Map API Key'),
     '#type' => 'textfield',
     '#default_value' => variable_get('baidu_map_field_api_key', ''),
+    '#required' => TRUE,
   );
 
   $form['baidu_map_field_label_style'] = array(

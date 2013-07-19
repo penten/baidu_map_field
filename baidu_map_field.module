@@ -72,7 +72,7 @@ function baidu_map_field_field_widget_error($element, $error, $form, &$form_stat
  * Implements hook_field_formatter_view().
  */
 function baidu_map_field_field_formatter_view($object_type, $object, $field, $instance, $langcode, $items, $display) {
-  $map_id = 'bmap_' . uniqid();
+  $map_id = 'bmap_0';
 
   baidu_map_field_include_resources();
 
@@ -89,7 +89,7 @@ function baidu_map_field_field_formatter_view($object_type, $object, $field, $in
  * Implements hook_field_widget_form().
  */
 function baidu_map_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  $map_id = 'bmap_' . uniqid();
+  $map_id = 'bmap_' . $delta;
 
   if (!isset($items[$delta])) {
     $items[$delta] = array(
@@ -136,9 +136,7 @@ function baidu_map_field_field_widget_form(&$form, &$form_state, $field, $instan
     '#default_value' => $items[$delta]['description'],
   );
 
-  $element['search'] = array(
-    '#markup' => baidu_map_field_search_markup(),
-  );
+  $element['search'] = baidu_map_field_search_markup();
 
   $form['#attached']['js'][] = array(
     'data' => array($map_id => array($items[$delta])),
@@ -205,8 +203,13 @@ function baidu_map_field_container_markup($id, $edit = FALSE) {
  * Returns the markup of the geocoder search field and button.
  */
 function baidu_map_field_search_markup() {
-  return '<div class="map_geocoder">
-				<input type="text" class="form-text"/>
-				<input type="button" value="Search" class="form-submit" />
-			</div>';
+
+  $element['geocoder_search'] = array(
+    "#type" => 'textfield',
+    '#title' => t('Search for an address'),
+    '#attributes' => array('class' => array('map_geocoder')),
+    '#suffix' => '<a class="map_geocoder_submit" href="javascript:;">'.t('Search').'</a>',
+  );
+
+  return $element;
 }

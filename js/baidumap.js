@@ -11,6 +11,9 @@
         var map = new BMap.Map(id);
         var editable = $(el).hasClass('edit_map');
         var settings = Drupal.settings.baidu_map;
+        if(!Drupal.settings[id]) {
+          Drupal.settings[id] = [{lon: 0, lat: 0, zoom: 4}];
+        }
 
         var points = [];
         $.each(Drupal.settings[id], function(i, el) {
@@ -67,9 +70,10 @@
           });
 
           // Add geocoding field to search for a location
-          $(el).parent().find('.map_geocoder input[type="button"]').click(function() {
-            var myGeo = new BMap.Geocoder();
-            myGeo.getPoint($(this).parent().find('input[type="text"]').val(), function(p){
+          $(el).parent().find('.map_geocoder_submit').click(function() {
+            var geo = new BMap.Geocoder();
+            var addr = $(this).parent().find('.map_geocoder').val();
+            geo.getPoint(addr, function(p){
               if (p) {
                 pin.setPosition(p);
                 map.centerAndZoom(p, map.getZoom());
@@ -81,6 +85,7 @@
             });
           });
         }
+        
       });
     }
   }

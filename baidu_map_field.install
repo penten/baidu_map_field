@@ -41,5 +41,9 @@ function baidu_map_field_field_schema($field) {
  * Implements hook_uninstall().
  */
 function baidu_map_field_uninstall() {
-  variable_del('baidu_map_field_*');
+  variable_del('baidu_map_field_api_key');
+  variable_del('baidu_map_field_label_style');
+  variable_del('baidu_map_field_pin_icon');
+  variable_del('baidu_map_field_pin_icon_width');
+  variable_del('baidu_map_field_pin_icon_height');
 }
