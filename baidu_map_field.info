@@ -4,4 +4,3 @@ core = 7.x
 package = Fields
 configure = admin/config/services/baidu_map_field
 dependencies[] = field
-
