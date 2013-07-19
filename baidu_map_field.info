@@ -5,3 +5,5 @@ package = Fields
 configure = admin/config/services/baidu_map_field
 dependencies[] = field
 
+files[] = baidu_map_field.admin.inc
+files[] = baidu_map_field.admin.install

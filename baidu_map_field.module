@@ -1,129 +1,212 @@
 <?php
 
+/**
+ * @file
+ * Defines the baidu map field
+ */
+
+/**
+ * Implements hook_menu().
+ */
 function baidu_map_field_menu() {
-	$items['admin/config/services/baidu_map_field'] = array(
-		'title' => 'Baidu Map Field',
-		'description' => 'Baidu Map field settings',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('baidu_map_field_settings_form'),
-		'file' => 'baidu_map_field.admin.inc',
-		'access arguments' => array('access administration pages'),
-	);
+  $items['admin/config/services/baidu_map_field'] = array(
+    'title' => 'Baidu Map Field',
+    'description' => 'Baidu Map field settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('baidu_map_field_settings_form'),
+    'file' => 'baidu_map_field.admin.inc',
+    'access arguments' => array('access administration pages'),
+  );
 
-	return $items;
+  return $items;
 }
 
+/**
+ * Implements hook_field_info().
+ */
 function baidu_map_field_field_info() {
-	$items['baidu_map_field'] = array(
-		'label' => t('Baidu Map Field'),
-		'description' => t('Display a map using Baidu Maps'),
-		'default_widget' => 'baidu_map_field_widget',
-		'default_formatter' => 'baidu_map_field_formatter',
-		'module' => 'baidu_map_field',
-	);
+  $items['baidu_map_field'] = array(
+    'label' => t('Baidu Map Field'),
+    'description' => t('Display a map using Baidu Maps'),
+    'default_widget' => 'baidu_map_field_widget',
+    'default_formatter' => 'baidu_map_field_formatter',
+    'module' => 'baidu_map_field',
+  );
 
-	return $items;
+  return $items;
 }
 
+/**
+ * Implements hook_field_widget_info().
+ */
 function baidu_map_field_field_widget_info() {
-	$items['baidu_map_field_widget'] = array(
-		'label' => t('Baidu Map'),
-		'field types' => array('baidu_map_field'),
-	);
+  $items['baidu_map_field_widget'] = array(
+    'label' => t('Baidu Map'),
+    'field types' => array('baidu_map_field'),
+  );
 
-	return $items;
+  return $items;
 }
 
+/**
+ * Implements hook_field_formatter_info().
+ */
 function baidu_map_field_field_formatter_info() {
-	$items['baidu_map_field_formatter'] = array(
-		'label' => t('Baidu Map'),
-		'description' => t('Display Baidu Map'),
-		'field types' => array('baidu_map_field'),
-	);
+  $items['baidu_map_field_formatter'] = array(
+    'label' => t('Baidu Map'),
+    'description' => t('Display Baidu Map'),
+    'field types' => array('baidu_map_field'),
+  );
 
-	return $items;
+  return $items;
 }
 
+/**
+ * Implements hook_field_widget_error().
+ */
 function baidu_map_field_field_widget_error($element, $error, $form, &$form_state) {
-	form_error($element, $error['message']);
+  form_error($element, $error['message']);
 }
 
+/**
+ * Implements hook_field_formatter_view().
+ */
 function baidu_map_field_field_formatter_view($object_type, $object, $field, $instance, $langcode, $items, $display) {
-	$map_id = 'bmap_'.uniqid();
+  $map_id = 'bmap_' . uniqid();
 
-	baidu_map_field_include_resources();
+  baidu_map_field_include_resources();
 
-	$delta = reset(array_keys($items));
+  $delta = reset(array_keys($items));
 
-	$element[$delta] = array('#markup' => '<div class="map_container" id="'.$map_id.'">loading...</div>');
-	drupal_add_js(array($map_id => $items), 'setting');
+  $element[$delta] = array('#markup' => baidu_map_field_container_markup($map_id));
 
-	return $element;
+  drupal_add_js(array($map_id => $items), 'setting');
+
+  return $element;
 }
 
+/**
+ * Implements hook_field_widget_form().
+ */
 function baidu_map_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-	$map_id = 'bmap_'.uniqid();
+  $map_id = 'bmap_' . uniqid();
 
-	$element = array('#type' => 'fieldset', '#title' => t('Baidu Map'));
-	$element['map'] = array('#markup' => '<div class="map_container edit_map" id="'.$map_id.'">loading...</div>');
+  if (!isset($items[$delta])) {
+    $items[$delta] = array(
+      'lat' => 0,
+      'lon' => 0,
+      'zoom' => 4,
+      'description' => '',
+    );
+  }
 
-	$element['lat'] = array('#type' => 'hidden', '#title' => t('Latitude'), '#required' => true);
-	$element['lon'] = array('#type' => 'hidden', '#title' => t('Longitude'), '#required' => true);
-	$element['zoom'] = array('#type' => 'hidden', '#title' => t('Zoom'), '#required' => true);
+  $element = array(
+    '#type' => 'fieldset',
+    '#title' => t('Baidu Map')
+  );
 
-	$element['description'] = array('#type' => 'textfield', '#title' => t('Description'));
+  $element['map'] = array(
+    '#markup' => baidu_map_field_container_markup($map_id, TRUE)
+  );
 
-	$element['search'] = array('#markup' => '<div class="map_geocoder"><input type="text" class="form-text"/><input type="button" value="Search" class="form-submit" /></div>');
+  $element['lat'] = array(
+    '#type' => 'hidden',
+    '#title' => t('Latitude'),
+    '#required' => TRUE,
+    '#default_value' => $items[$delta]['lat'],
+  );
 
-	if(!isset($items[$delta])) {
-		$items[$delta] = array(
-			'lat' => 0,
-			'lon' => 0,
-			'zoom' => 4,
-			'description' => '',
-		);
-	}
+  $element['lon'] = array(
+    '#type' => 'hidden',
+    '#title' => t('Longitude'),
+    '#required' => TRUE,
+    '#default_value' => $items[$delta]['lon'],
+  );
 
-	$element['lat']['#default_value'] = $items[$delta]['lat'];
-	$element['lon']['#default_value'] = $items[$delta]['lon'];
-	$element['zoom']['#default_value'] = $items[$delta]['zoom'];
-	$element['description']['#default_value'] = $items[$delta]['description'];
+  $element['zoom'] = array(
+    '#type' => 'hidden',
+    '#title' => t('Zoom'),
+    '#required' => TRUE,
+    '#default_value' => $items[$delta]['zoom'],
+  );
 
-	$form['#attached']['js'][] = array(
-		'data' => array($map_id => array($items[$delta])),
-		'type' => 'setting',
-	);
+  $element['description'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Description'),
+    '#default_value' => $items[$delta]['description'],
+  );
 
-	baidu_map_field_include_resources();
+  $element['search'] = array(
+    '#markup' => baidu_map_field_search_markup()
+  );
 
-	return $element;
+  $form['#attached']['js'][] = array(
+    'data' => array($map_id => array($items[$delta])),
+    'type' => 'setting',
+  );
+
+  baidu_map_field_include_resources();
+
+  return $element;
 }
 
-function baidu_map_field_include_resources() {
-	$api_key = variable_get('baidu_map_field_api_key', '');
-	$settings = baidu_map_field_get_settings();
-
-	drupal_add_js('http://api.map.baidu.com/api?v=1.5&ak=' . $api_key, 'external');
-	drupal_add_js('http://api.map.baidu.com/library/MarkerTool/1.2/src/MarkerTool_min.js', 'external');
-	drupal_add_js(drupal_get_path('module', 'baidu_map_field') . '/js/baidumap.js');
-	drupal_add_js(array('baidu_map' => $settings), 'setting');
-	
-	drupal_add_css(drupal_get_path('module', 'baidu_map_field') . '/css/baidumap.css');
-}
-
+/**
+ * Implements hook_field_is_empty().
+ */
 function baidu_map_field_field_is_empty($item, $field) {
-	return empty($item['lat']) || empty($item['lon']);
+  return empty($item['lat']) || empty($item['lon']);
 }
 
+
+/**
+ * Adds the js and css files necessary to display the map to the page
+ */
+function baidu_map_field_include_resources() {
+  $api_key = variable_get('baidu_map_field_api_key', '');
+  $settings = baidu_map_field_get_settings();
+
+  drupal_add_js('http://api.map.baidu.com/api?v=1.5&ak=' . $api_key, 'external');
+  drupal_add_js('http://api.map.baidu.com/library/MarkerTool/1.2/src/MarkerTool_min.js', 'external');
+  drupal_add_js(drupal_get_path('module', 'baidu_map_field') . '/js/baidumap.js');
+  drupal_add_js(array('baidu_map' => $settings), 'setting');
+
+  drupal_add_css(drupal_get_path('module', 'baidu_map_field') . '/css/baidumap.css');
+}
+
+/*
+ * Returns an array of javascript settings to be used in the display of the map
+ */
 function baidu_map_field_get_settings() {
-	$settings = array();
-	$settings['label_style'] = json_decode(variable_get('baidu_map_field_label_style', ''));
+  $settings = array();
+  $settings['label_style'] = json_decode(variable_get('baidu_map_field_label_style', ''));
 
-	if(variable_get('baidu_map_field_pin_icon', '')) {
-		$settings['pin_icon'] = url(variable_get('baidu_map_field_pin_icon', ''), array('absolute' => true));
-		$settings['pin_icon_height'] = variable_get('baidu_map_field_pin_icon_height', '25');
-		$settings['pin_icon_width'] = variable_get('baidu_map_field_pin_icon_width', '25');
-	}
+  if (variable_get('baidu_map_field_pin_icon', '')) {
+    $settings['pin_icon'] = url(variable_get('baidu_map_field_pin_icon', ''), array('absolute' => TRUE));
+    $settings['pin_icon_height'] = variable_get('baidu_map_field_pin_icon_height', '25');
+    $settings['pin_icon_width'] = variable_get('baidu_map_field_pin_icon_width', '25');
+  }
 
-	return $settings;
+  return $settings;
+}
+
+/*
+ * Returns the markup of the map container
+ */
+function baidu_map_field_container_markup($id, $edit = FALSE) {
+  $classes = 'map_container';
+  if ($edit) {
+    $classes .= ' edit_map';
+  }
+
+  return '<div class="' . $classes . '" id="' . $id . '">loading...</div>';
+}
+
+/*
+ * Returns the markup of the geocoder search field and button
+ */
+function baidu_map_field_search_markup() {
+  return '<div class="map_geocoder">
+				<input type="text" class="form-text"/>
+				<input type="button" value="Search" class="form-submit" />
+			</div>';
 }
