@@ -25,7 +25,7 @@
             }
             pin.setLabel(label);
             map.addOverlay(pin);
-                        
+            
             if(Drupal.settings.baidu_map.pin_icon) {
               var icon = new BMap.Icon(
                   Drupal.settings.baidu_map.pin_icon,

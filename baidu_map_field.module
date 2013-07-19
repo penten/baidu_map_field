@@ -15,7 +15,7 @@ function baidu_map_field_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('baidu_map_field_settings_form'),
     'file' => 'baidu_map_field.admin.inc',
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('administer site configuration'),
   );
 
   return $items;
@@ -102,11 +102,11 @@ function baidu_map_field_field_widget_form(&$form, &$form_state, $field, $instan
 
   $element = array(
     '#type' => 'fieldset',
-    '#title' => t('Baidu Map')
+    '#title' => t('Baidu Map'),
   );
 
   $element['map'] = array(
-    '#markup' => baidu_map_field_container_markup($map_id, TRUE)
+    '#markup' => baidu_map_field_container_markup($map_id, TRUE),
   );
 
   $element['lat'] = array(
@@ -137,7 +137,7 @@ function baidu_map_field_field_widget_form(&$form, &$form_state, $field, $instan
   );
 
   $element['search'] = array(
-    '#markup' => baidu_map_field_search_markup()
+    '#markup' => baidu_map_field_search_markup(),
   );
 
   $form['#attached']['js'][] = array(
@@ -159,7 +159,7 @@ function baidu_map_field_field_is_empty($item, $field) {
 
 
 /**
- * Adds the js and css files necessary to display the map to the page
+ * Adds the js and css files necessary to display the map to the page.
  */
 function baidu_map_field_include_resources() {
   $api_key = variable_get('baidu_map_field_api_key', '');
@@ -173,8 +173,8 @@ function baidu_map_field_include_resources() {
   drupal_add_css(drupal_get_path('module', 'baidu_map_field') . '/css/baidumap.css');
 }
 
-/*
- * Returns an array of javascript settings to be used in the display of the map
+/**
+ * Returns an array of javascript settings to be used in the display of the map.
  */
 function baidu_map_field_get_settings() {
   $settings = array();
@@ -189,8 +189,8 @@ function baidu_map_field_get_settings() {
   return $settings;
 }
 
-/*
- * Returns the markup of the map container
+/**
+ * Returns the markup of the map container.
  */
 function baidu_map_field_container_markup($id, $edit = FALSE) {
   $classes = 'map_container';
@@ -201,8 +201,8 @@ function baidu_map_field_container_markup($id, $edit = FALSE) {
   return '<div class="' . $classes . '" id="' . $id . '">loading...</div>';
 }
 
-/*
- * Returns the markup of the geocoder search field and button
+/**
+ * Returns the markup of the geocoder search field and button.
  */
 function baidu_map_field_search_markup() {
   return '<div class="map_geocoder">

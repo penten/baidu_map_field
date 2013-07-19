@@ -6,7 +6,7 @@
  */
 
 /**
- * Defines the settings form for of the module
+ * Defines the settings form for of the module.
  */
 function baidu_map_field_settings_form($form, &$form_state) {
   $form['baidu_map_field_api_key'] = array(
