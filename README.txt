@@ -1,10 +1,14 @@
-Description
------------
-This module adds a Baidu Map field type.
+Description 
+----------- 
+
+This module adds a Baidu Map field type allowing the user to add maps to their
+entities that will be displayed using Baidu Maps, a mapping service similar to
+Google Maps.
 
 A pin on the map can be dragged and dropped by the user while editing the field
 contents to choose a position to highlight, a description can also be provided
 which will be displayed as a label next to the pin.
+
 HTML may be entered in the description field (such as <br/> to add a line break
 to the label).
 

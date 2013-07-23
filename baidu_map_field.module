@@ -208,7 +208,7 @@ function baidu_map_field_search_markup() {
     "#type" => 'textfield',
     '#title' => t('Search for an address'),
     '#attributes' => array('class' => array('map_geocoder')),
-    '#suffix' => '<a class="map_geocoder_submit" href="javascript:;">'.t('Search').'</a>',
+    '#suffix' => '<a class="map_geocoder_submit" href="javascript:;">' . t('Search') . '</a>',
   );
 
   return $element;
