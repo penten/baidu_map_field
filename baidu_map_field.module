@@ -196,7 +196,7 @@ function baidu_map_field_container_markup($id, $edit = FALSE) {
     $classes .= ' edit_map';
   }
 
-  return '<div class="' . $classes . '" id="' . $id . '">loading...</div>';
+  return '<div class="' . $classes . '" id="' . $id . '">' . t('Loading') . '...</div>';
 }
 
 /**

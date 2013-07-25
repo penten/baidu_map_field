@@ -21,6 +21,10 @@ the pins optimally.
 
 The label styling and pin logo can be changed using the settings page.
 
+To change the dimensions of the map when it is displayed, you can modify the
+width and height of the .map_container element using css. The default size can
+be found in the css/baidumap.css file in this module.
+
 
 Requirements
 ------------
